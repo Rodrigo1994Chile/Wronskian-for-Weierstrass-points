@@ -82,7 +82,23 @@ M=Wronskian(F,(k^-1,k^-1),[])
 
 M.det().valuation()
 
+### Computing the weight of the point $[\sqrt{3}i:1:1]$ on the Wiman's sextic
 
+S.<x> = PolynomialRing(QQ)
+
+f = x^2+3
+
+K.<k> = S.quotient(f)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^6+y^6+z^6+(x^2+y^2+z^2)*(x^4+y^4+z^4)-12*x^2*y^2*z^2
+
+print(F(k,1,1))
+
+M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)])
+
+print(M.det())
 
 
 
