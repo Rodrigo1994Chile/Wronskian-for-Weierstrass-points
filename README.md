@@ -98,7 +98,7 @@ print(F(k,1,1))
 
 M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)])
 
-print(M.det())
+M.det().valuation()
 
 
 
