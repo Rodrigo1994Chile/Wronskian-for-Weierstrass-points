@@ -1,0 +1,383 @@
+def implicit_derivatives(x0, y0, F, g, point_values=None):
+    """
+    Compute the first g derivatives of the local branch y(x)
+    determined implicitly by
+
+        F(x,y)=0
+
+    at a smooth point (x0,y0).
+
+    INPUT
+    =====
+
+    x0, y0 :
+        Point satisfying F(x0,y0)=0.
+
+    F :
+        Polynomial (or more generally an expression) in x and y.
+
+    g :
+        Number of derivatives to compute.
+
+    point_values :
+        Optional dictionary assigning values to additional
+        parameters appearing in F.
+
+    OUTPUT
+    ======
+
+    A list
+
+        [y'(x0), y''(x0), ..., y^(g)(x0)]
+
+    computed recursively from the identity
+
+        F(x, y(x)) = 0.
+    """
+
+    # ============================================================
+    # Ambient polynomial ring K[x,y,z]
+    # ============================================================
+    
+    if point_values is None:
+        point_values = {}
+
+    R = F.parent()
+    gens = R.gens()
+
+    x = gens[0]
+    y = gens[1]
+
+    K = R.base_ring()
+
+    # ============================================================
+    # Verify that (x0,y0) lies on the curve.
+    # ============================================================
+    
+    subs0 = {x: x0, y: y0}
+    subs0.update(point_values)
+
+    if F.subs(subs0) != 0:
+        raise ValueError("The point is not in the curve")
+
+    Fy = diff(F, y).subs(subs0)
+
+    # ============================================================
+    # Smoothness condition.
+    #
+    # We use x as local parameter, so the Implicit Function
+    # Theorem requires Fy(x0,y0) ≠ 0.
+    # ============================================================
+    
+    if Fy == 0:
+        raise ValueError("Fy=0 en el punto")
+
+    # ============================================================
+    # Formal variables
+    #
+    # a_k will represent the unknown derivative
+    #
+    #     y^(k)(x0)
+    #
+    # in the Taylor expansion of the local branch.
+    # ============================================================
+    
+    A = PolynomialRing(K, [f'a{i}' for i in range(1, g+1)])
+    a = A.gens()
+    
+    S.<t> = PowerSeriesRing(A, default_prec=g+2)
+
+    # ============================================================
+    # Formal Taylor series
+    #
+    #     y(x0+t)
+    #
+    # truncated to order g.
+    # ============================================================
+    
+    y_series = S(y0)
+
+    for k in range(1, g+1):
+        y_series += a[k-1] * t^k / factorial(k)
+
+    # ============================================================
+    # Substitute
+    #
+    #     x = x0+t
+    #
+    # and the formal expansion of y into F.
+    #
+    # The resulting series must vanish identically.
+    # ============================================================
+    
+    subs_series = {
+        x: S(x0) + t,
+        y: y_series
+    }
+
+    for v, val in point_values.items():
+        subs_series[v] = S(val)
+
+    expr = S(F.subs(subs_series))
+
+    derivatives = []
+
+    current_expr = expr
+
+    subs_derivs = {}
+
+    # ============================================================
+    # Recursive determination of the derivatives.
+    #
+    # At step k, the coefficient of t^k is linear in a_k.
+    # After substituting all previously computed derivatives,
+    # solve the resulting linear equation for a_k.
+    # ============================================================
+    
+    for k in range(1, g+1):
+    
+        coeff = current_expr[k]
+    
+        coeff = coeff.subs(subs_derivs)
+    
+        ak = a[k-1]
+    
+        c1 = coeff.coefficient(ak)
+        c0 = coeff.subs({ak: 0})
+    
+        if c1 == 0:
+            raise ValueError(f"La ecuación no es lineal en {ak}")
+    
+        value = -c0 / c1
+    
+        derivatives.append(value)
+    
+        subs_derivs[ak] = value
+
+    # ============================================================
+    # Convert the derivatives back to the base field.
+    # ============================================================
+    
+    for i in range(len(derivatives)):
+        derivatives[i]=K(derivatives[i])
+    return derivatives
+
+def Wronskian(F, point, nodes=[]):
+    """
+    Compute the truncated Wronskian matrix associated to a basis of
+    holomorphic differentials on the normalization of a nodal plane curve.
+
+    INPUT
+    =====
+
+    F :
+        Homogeneous polynomial F(x,y,z) of degree d defining an
+        irreducible nodal plane curve.
+
+    point :
+        Smooth affine point (x0,y0) lying on the curve F(x,y,1)=0.
+
+    nodes :
+        List of nodes of the plane model
+
+            [(a1,b1,c1), ..., (ar,br,cr)]
+
+        given in homogeneous coordinates.
+
+    OUTPUT
+    ======
+
+    A g x g matrix whose (i,j)-entry is the truncated Taylor expansion of
+
+        d^(j-1)/dt^(j-1)(f_i(t))
+
+    in the local parameter t centered at the chosen point.
+
+    Here
+
+        omega_i = f_i(t) dt
+
+    is the local expression of a basis of holomorphic differentials
+    obtained from the adjoint construction.
+
+    The determinant of this matrix is the local Wronskian whose order
+    of vanishing equals the Weierstrass weight of the point.
+    """
+
+    # ============================================================
+    # Ambient polynomial ring K[x,y,z]
+    # ============================================================
+
+    R = F.parent()
+
+    xa, ya, za = R.gens()
+
+    K = R.base_ring()
+
+    # ============================================================
+    # Degree of the plane curve
+    # ============================================================
+
+    d = F.total_degree()
+
+    # ============================================================
+    # Geometric genus
+    #
+    # For a nodal plane curve:
+    #
+    #     g = p_a - δ
+    #
+    # where p_a is the arithmetic genus and δ is the number
+    # of nodes.
+    # ============================================================
+
+    pa = (d - 1)*(d - 2)//2
+
+    g = pa - len(nodes)
+
+    # ============================================================
+    # Degree of adjoint polynomials
+    #
+    # Holomorphic differentials on the normalization are
+    # represented by adjoint curves of degree d-3.
+    # ============================================================
+
+    m = d - 3
+
+    # ============================================================
+    # Homogeneous monomial basis of degree d-3
+    # ============================================================
+
+    monomials = []
+
+    for i in range(m + 1):
+        for j in range(m + 1 - i):
+
+            k = m - i - j
+            
+            monomials.append(xa^i * ya^j * za^k)
+
+    N = len(monomials)
+
+    # ============================================================
+    # Linear conditions defining adjoints:
+    #
+    #     P(node) = 0
+    #
+    # for every node of the plane model.
+    # ============================================================
+    
+    M = matrix(K, len(nodes), N)
+    for r, (a,b,c) in enumerate(nodes):
+
+        for s, mon in enumerate(monomials):
+
+            M[r,s] = mon(a, b, c)
+
+    # ============================================================
+    # Space of adjoint polynomials
+    #
+    # The kernel of the evaluation matrix parametrizes all
+    # degree d-3 adjoints.
+    # ============================================================
+
+    ker = M.right_kernel()
+
+    basis_vectors = ker.basis()
+
+    # ============================================================
+    # Recover adjoint polynomials from a basis of the kernel
+    # ============================================================
+
+    adjoints = []
+
+    for v in basis_vectors:
+
+        P = sum(v[i]*monomials[i] for i in range(N))
+
+        adjoints.append(P)
+
+    # ============================================================
+    # Affine chart z = 1
+    #
+    # Holomorphic differentials are represented as
+    #
+    #     ω = P(x,y,1)/F_y(x,y,1) dx
+    # ============================================================
+    
+    F_aff = F(xa,ya,1)
+    Fy = diff(F_aff,ya)
+
+    # ============================================================
+    # Local parameterization around the chosen point
+    #
+    # We use x = x0 + t and compute the Taylor expansion
+    #
+    #     y(t) = y0 + y1 t + y2 t²/2! + ...
+    #
+    # via implicit differentiation of F(x,y,1)=0.
+    #
+    # The expansion is computed up to order 2g.
+    # ============================================================
+
+    T.<t>=PolynomialRing(K)
+    x0=point[0]
+    y0=point[1]
+    imp=implicit_derivatives(x0,y0,F(xa,ya,1),2*g)
+
+    y=y0
+    for n in range(1,2*g):
+        i=factorial(n)
+        y+=imp[n-1]/i*t^(n)
+
+    # ============================================================
+    # Local expansions of the holomorphic differentials
+    #
+    # Substitute x=x0+t and y=y(t) into each adjoint.
+    # ============================================================
+
+    Fy=Fy(t+x0,y,1)
+    
+    fs=[]
+    for P in adjoints:
+    
+        P_aff = P(t+x0,y,1)
+
+        fs.append(P_aff)
+
+    # ============================================================
+    # Wronskian matrix
+    #
+    # Entry (i,j) is the (j-1)-th derivative of the local
+    # differential coefficient f_i(t).
+    #
+    # Denominators are cleared using powers of F_y so that
+    # computations remain in the polynomial ring.
+    # ============================================================
+
+    M=[]
+    for f in fs:
+        f_j=f/Fy
+        aux=[]
+        for i in range(g):
+            print(i)
+            df=diff(f_j,t,i)
+            df=df*Fy^(2^i)
+            df = df.numerator()
+            aux.append(df)
+        M.append(aux)
+    M=Matrix(M)
+
+    # ============================================================
+    # Truncate every entry at the maximal order needed for the
+    # computation of the Weierstrass weight:
+    #
+    #     g(g-1)/2
+    # ============================================================
+            
+    for i in range(g):
+        for j in range(g):
+            m=M[i,j]
+            m=m.truncate((g*(g-1))/2)
+            M[i,j]=m
+    return M.det()
