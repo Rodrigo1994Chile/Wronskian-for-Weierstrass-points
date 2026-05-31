@@ -66,7 +66,7 @@ M=Wronskian(F,(1,0),[])
 M.det().valuation()
 
 
-### Computing the weight of the point $[\sqrt[n]{2}^{-1}:\sqrt[n]{2}^{-1}:1]$ on the Fermat curve of degree n=5
+### Computing the weight of the point $[2^{-1/n}:2^{-1/n}:1]$ on the Fermat curve of degree n=5
 n=5
 a=0
 S.<x> = PolynomialRing(QQ)
