@@ -380,3 +380,52 @@ def Wronskian(F, point, nodes=[]):
             m=m.truncate((g*(g-1))/2)
             M[i,j]=m
     return M.det()
+
+
+###Main
+
+### Computing the weight of the point [1:0:1] on the curve F(x,y,z)=x^4+y^4-z^4
+
+R.<x,y,z>=PolynomialRing(QQ)
+
+F = x^4 + y^4 - z^4
+
+M=Wronskian(F,(1,0),[])
+
+M.det().valuation()
+
+
+### Computing the weight of the point $[\sqrt[n]{2}^{-1}:\sqrt[n]{2}^{-1}:1]$ on the Fermat curve of degree n=5
+n=5
+a=0
+S.<x> = PolynomialRing(QQ)
+
+f=x^n+2
+K.<k> = S.quotient(f)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^n + y^n + z^n
+
+M=Wronskian(F,(k^-1,k^-1),[])
+
+M.det().valuation()
+
+### Computing the weight of the point $[\sqrt{3}i:1:1]$ on the Wiman's sextic
+
+S.<x> = PolynomialRing(QQ)
+
+f = x^2+3
+
+K.<k> = S.quotient(f)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^6+y^6+z^6+(x^2+y^2+z^2)*(x^4+y^4+z^4)-12*x^2*y^2*z^2
+
+print(F(k,1,1))
+
+M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)])
+
+M.det().valuation()
+
