@@ -360,7 +360,6 @@ def Wronskian(F, point, nodes=[]):
         f_j=f/Fy
         aux=[]
         for i in range(g):
-            print(i)
             df=diff(f_j,t,i)
             df=df*Fy^(2^i)
             df = df.numerator()
