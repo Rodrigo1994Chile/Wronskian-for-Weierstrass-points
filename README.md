@@ -63,7 +63,7 @@ F = x^4 + y^4 - z^4
 
 M=Wronskian(F,(1,0),[])
 
-M.det().valuation()
+M.valuation()
 
 
 ### Computing the weight of the point $[2^{-1/n}:2^{-1/n}:1]$ on the Fermat curve of degree n=5
@@ -80,7 +80,7 @@ F = x^n + y^n + z^n
 
 M=Wronskian(F,(k^-1,k^-1),[])
 
-M.det().valuation()
+M.valuation()
 
 ### Computing the weight of the point $[\sqrt{3}i:1:1]$ on the Wiman's sextic
 
@@ -98,7 +98,7 @@ print(F(k,1,1))
 
 M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)])
 
-M.det().valuation()
+M.valuation()
 
 
 
