@@ -61,7 +61,7 @@ R.<x,y,z>=PolynomialRing(QQ)
 
 F = x^4 + y^4 - z^4
 
-M=Wronskian(F,(1,0),[])
+M=Wronskian(F,(1,0),[],3)
 
 M.valuation()
 
@@ -78,7 +78,7 @@ R.<x,y,z>=PolynomialRing(K)
 
 F = x^n + y^n + z^n
 
-M=Wronskian(F,(k^-1,k^-1),[])
+M=Wronskian(F,(k^-1,k^-1),[],6)
 
 M.valuation()
 
@@ -96,7 +96,7 @@ F = x^6+y^6+z^6+(x^2+y^2+z^2)*(x^4+y^4+z^4)-12*x^2*y^2*z^2
 
 print(F(k,1,1))
 
-M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)])
+M=Wronskian(F,(k,1),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)],5)
 
 M.valuation()
 
