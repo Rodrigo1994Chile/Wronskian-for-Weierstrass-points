@@ -240,7 +240,6 @@ def Wronskian(F, point, nodes, w):
     # ============================================================
     # Ambient polynomial ring K[x,y,z]
     # ============================================================
-    print("Ambient polynomial ring K[x,y,z]")
     
     R = F.parent()
 
@@ -251,7 +250,6 @@ def Wronskian(F, point, nodes, w):
     # ============================================================
     # Degree of the plane curve
     # ============================================================
-    print("Degree of the plane curve")
     
     d = F.total_degree()
 
@@ -265,7 +263,6 @@ def Wronskian(F, point, nodes, w):
     # where p_a is the arithmetic genus and δ is the number
     # of nodes.
     # ============================================================
-    print("Geometric genus")
     
     pa = (d - 1)*(d - 2)//2
 
@@ -277,13 +274,12 @@ def Wronskian(F, point, nodes, w):
     # Holomorphic differentials on the normalization are
     # represented by adjoint curves of degree d-3.
     # ============================================================
-    print("Degree of adjoint polynomials")
+    
     m = d - 3
 
     # ============================================================
     # Homogeneous monomial basis of degree d-3
     # ============================================================
-    print("Homogeneous monomial basis of degree d-3")
     
     monomials = []
 
@@ -303,7 +299,6 @@ def Wronskian(F, point, nodes, w):
     #
     # for every node of the plane model.
     # ============================================================
-    print("Linear conditions defining adjoints")
     
     M = matrix(K, len(nodes), N)
     for r, (a,b,c) in enumerate(nodes):
@@ -318,7 +313,6 @@ def Wronskian(F, point, nodes, w):
     # The kernel of the evaluation matrix parametrizes all
     # degree d-3 adjoints.
     # ============================================================
-    print("Space of adjoint polynomials")
     
     ker = M.right_kernel()
 
@@ -327,7 +321,6 @@ def Wronskian(F, point, nodes, w):
     # ============================================================
     # Recover adjoint polynomials from a basis of the kernel
     # ============================================================
-    print("Recover adjoint polynomials from a basis of the kernel")
     
     adjoints = []
 
@@ -344,7 +337,6 @@ def Wronskian(F, point, nodes, w):
     #
     #     ω = P(x,y,1)/F_y(x,y,1) dx
     # ============================================================
-    print("Affine chart")
     
     F_aff = F(xa,ya,1)
     Fy = diff(F_aff,ya)
@@ -360,13 +352,11 @@ def Wronskian(F, point, nodes, w):
     #
     # The expansion is computed up to order 2g.
     # ============================================================
-    print("Local parameterization around the chosen point")
-    print("Sigo aquí 1")
+    
     T.<t>=PolynomialRing(K)
     x0=point[0]
     y0=point[1]
 
-    print("Sigo aquí 2")
     if w==0:
         N=g+g
     else:
@@ -375,7 +365,6 @@ def Wronskian(F, point, nodes, w):
 
     y=y0
     for n in range(1,N+1):
-        print(n)
         i=factorial(n)
         y+=imp[n-1]/i*t^(n)
 
@@ -384,7 +373,6 @@ def Wronskian(F, point, nodes, w):
     #
     # Substitute x=x0+t and y=y(t) into each adjoint.
     # ============================================================
-    print("Local expansions of the holomorphic differentials")
     
     Fy=Fy(t+x0,y,1)
     
@@ -404,7 +392,6 @@ def Wronskian(F, point, nodes, w):
     # Denominators are cleared using powers of F_y so that
     # computations remain in the polynomial ring.
     # ============================================================
-    print("Wronskian matrix")
     
     M=[]
     for f in fs:
@@ -412,7 +399,6 @@ def Wronskian(F, point, nodes, w):
         aux=[]
         df=f_j
         for i in range(g):
-            print(i)
             aux.append(df)
             if i!=g-1:
                 df=diff(df,t)
@@ -425,7 +411,6 @@ def Wronskian(F, point, nodes, w):
     #
     #     g(g-1)/2
     # ============================================================
-    print("Truncate every entry")
     
     T.<t>=T.quotient(t^(w+1))
 
