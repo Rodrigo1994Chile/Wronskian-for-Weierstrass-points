@@ -1,0 +1,35 @@
+A.<p>=PolynomialRing(QQ)
+A=Frac(A)
+T.<k>=PolynomialRing(A)
+C=k^6 + (1/2*p + 1/2)*k^4 + (-1/2*p + 1/2)*k^2 + 1
+
+K.<k>=T.quotient(C)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = F = x^6+y^6+z^6+(x^2+y^2+z^2)*(x^4+y^4+z^4)-12*x^2*y^2*z^2-p*(x^2-y^2)*(y^2-z^2)*(z^2-x^2)
+
+M=Wronskian(F,(0,k),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)],5)
+
+detM=M.det()
+
+f=detM[1]
+f=f*f[0].denominator()
+
+
+R.<k,p>=PolynomialRing(QQ,order="lex")
+
+I=Ideal([R(f),R(C)])
+GB=I.groebner_basis()
+
+h=GB[-1]
+for poli in factor(h):
+    print(poli)
+
+
+### Output:
+#  (p^2 - 125, 6)
+#  (p^2 + 3, 9)
+#  (313*p^8 - 26196*p^6 - 908026*p^4 - 61330164*p^2 - 109442039, 1)
+
+
