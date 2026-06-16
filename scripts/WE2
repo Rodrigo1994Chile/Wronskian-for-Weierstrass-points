@@ -32,3 +32,23 @@ for poli in factor(h):
 #  (p^2 - 105, 1)
 #  (p^2 + 3, 3)
 
+
+A.<p>=PolynomialRing(QQ)
+A.<p>=A.quotient(p^2-105)
+
+T.<k>=PolynomialRing(A)
+C=k^2 + 3
+
+K.<k>=T.quotient(C)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = F = x^6+y^6+z^6+(x^2+y^2+z^2)*(x^4+y^4+z^4)-12*x^2*y^2*z^2-p*(x^2-y^2)*(y^2-z^2)*(z^2-x^2)
+
+M=Wronskian(F,(1,k),[(1,1,1),(-1,1,1),(1,-1,1),(1,1,-1)],5)
+
+print(M.det())
+
+### Output:
+#  (141480675/536870912*p - 1540468125/1073741824)*t^5 + (-1913625/1073741824*p + 66976875/1073741824)*t^4 + 42525/536870912*p*t^3
+
