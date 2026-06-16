@@ -1,0 +1,66 @@
+A.<p>=PolynomialRing(QQ)
+A=Frac(A)
+T.<k>=PolynomialRing(A)
+C=k^4+2*p*k^2+(2+p)
+
+K.<k>=T.quotient(C)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^4+y^4+z^4+p*(x^2*y^2+y^2*z^2+z^2*x^2)
+
+M=Wronskian(F,(k,1),[],4)
+
+detM=M.det()
+
+f=detM[0]
+f=f*f[0].denominator()
+
+
+R.<k,p>=PolynomialRing(QQ,order="lex")
+
+I=Ideal([R(f),R(C)])
+GB=I.groebner_basis()
+
+h=GB[-1]
+for poli in factor(h):
+    print(poli)
+
+
+### Output:
+# (p - 3, 1)    ##  p = 3
+# (p - 2, 1)    ##  p = 2
+# (p + 2, 6)    ##  P = -2
+
+p=3
+T.<k>=PolynomialRing(A)
+C=k^2+1
+K.<k>=T.quotient(C)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^4+y^4+z^4+p*(x^2*y^2+y^2*z^2+z^2*x^2)
+
+M=Wronskian(F,(k,1),[],4)
+
+print(M.det())
+
+### Output:
+# -5805/256*t^4 + 105/32*k*t^3 + 15/64*t^2
+
+
+p=3
+T.<k>=PolynomialRing(A)
+C=k^2+5
+K.<k>=T.quotient(C)
+
+R.<x,y,z>=PolynomialRing(K)
+
+F = x^4+y^4+z^4+p*(x^2*y^2+y^2*z^2+z^2*x^2)
+
+M=Wronskian(F,(k,1),[],4)
+
+print(M.det())
+
+### Output:
+# 67672809/2500000000*t^4 - 125631/31250000*k*t^3 - 62283/25000000*t^2 + 18/78125*k*t + 3/50000
