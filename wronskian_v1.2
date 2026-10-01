@@ -32,7 +32,7 @@ def power_quotient(f, g, N):
     return sum(c[n] * t^n for n in range(N))
 
 
-def Wronskian(F,point,nodes):
+def Wronskian(F,point,nodes,w=2):
     """
     Compute the truncated Wronskian matrix associated to a basis of
     holomorphic differentials on the normalization of a nodal plane curve.
@@ -108,7 +108,7 @@ def Wronskian(F,point,nodes):
     S_1.<a>=PolynomialRing(k)
     x_t=x0+t
     y_t=y0
-    for n in range(1,2*g+1):
+    for n in range(1,w+g+1):
         aux=F(x_t,a*t^n+y_t,1)
         aux=aux.coefficient({t:n})
         y_t+=S_1(aux).roots()[0][0]*t^n
@@ -174,7 +174,7 @@ def Wronskian(F,point,nodes):
     Fy=S_2(Fy)
     for i in range(len(adjoints)):
         f=S_2(adjoints[i](x_t,y_t,1))
-        f_j=power_quotient(f, Fy, 2*g)
+        f_j=power_quotient(f, Fy, w+g)
         aux=[]
         df=f_j
         for i in range(g):
@@ -194,7 +194,7 @@ def Wronskian(F,point,nodes):
     for i in range(g):
         for j in range(g):
             m=M[i,j]
-            m=m.truncate(g)
+            m=m.truncate(w)
             M[i,j]=m
     return M    
 
