@@ -93,7 +93,9 @@ def Wronskian(F,point,nodes,w=2):
         raise ValueError("The point is not on the curve")
     if Fy(x0,y0,z0)==k(0):
         F=F(y,x,z)
-        Wronskian(F,point,nodes)
+        point=[y0,x0,z0]
+        nodes=[i[1],i[2],i[0]] for i in nodes]
+        Wronskian(F,point,nodes,w)
         
     # ============================================================
     # Local parameterization around the chosen point
