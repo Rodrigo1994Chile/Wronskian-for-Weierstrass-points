@@ -31,7 +31,6 @@ def power_quotient(f, g, N):
 
     return sum(c[n] * t^n for n in range(N))
 
-
 def Wronskian(F,point,nodes,w=2):
     """
     Compute the truncated Wronskian matrix associated to a basis of
@@ -84,18 +83,15 @@ def Wronskian(F,point,nodes,w=2):
     rho=(d-1)*(d-2)/2
     g=rho-r
     Fy=diff(F,y)
-    x0,y0,z0=[k(j) for j in point]
+    x0,y0=[k(j) for j in point]
 
     # ============================================================
     # Choose an appropiate affine chart
     # ============================================================
-    if F(x0,y0,z0)!=k(0):
+    if F(x0,y0,1)!=k(0):
         raise ValueError("The point is not on the curve")
-    if Fy(x0,y0,z0)==k(0):
-        F=F(y,x,z)
-        point=[y0,x0,z0]
-        nodes=[i[1],i[2],i[0]] for i in nodes]
-        Wronskian(F,point,nodes,w)
+    if Fy(x0,y0,1)==k(0):
+        raise ValueError("The point is not smooth")
         
     # ============================================================
     # Local parameterization around the chosen point
@@ -180,7 +176,7 @@ def Wronskian(F,point,nodes,w=2):
         aux=[]
         df=f_j
         for i in range(g):
-            print(i)
+            #print(i)
             aux.append(df)
             if i!=g-1:
                 df=diff(df,t)
@@ -199,6 +195,7 @@ def Wronskian(F,point,nodes,w=2):
             m=m.truncate(w)
             M[i,j]=m
     return M    
+
 
 ### MAIN
 ###  Wiman-Edge pencil in genus 6
