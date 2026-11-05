@@ -11,3 +11,7 @@
 ### v1.1.0 (2026-10-01)
 
 - Implementation of computation of power series of y=y(t) via algebraic methods instead of analytic
+
+### v1.2.0 (2026-11-05)
+
+- Improvement of the use of (algebraic) power series
